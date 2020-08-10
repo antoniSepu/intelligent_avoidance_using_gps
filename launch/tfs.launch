@@ -1,0 +1,28 @@
+<launch>
+  <!-- Mavros apm.launch primero -->
+  <arg name="fcu_url" default="/dev/ttyUSB0:57600" />
+	<arg name="gcs_url" default="" />
+	<arg name="tgt_system" default="1" />
+	<arg name="tgt_component" default="1" />
+	<arg name="log_output" default="screen" />
+	<arg name="fcu_protocol" default="v2.0" />
+	<arg name="respawn_mavros" default="false" />
+
+	<include file="$(find mavros)/launch/node.launch">
+		<arg name="pluginlists_yaml" value="$(find mavros)/launch/apm_pluginlists.yaml" />
+		<arg name="config_yaml" value="$(find mavros)/launch/apm_config.yaml" />
+
+		<arg name="fcu_url" value="$(arg fcu_url)" />
+		<arg name="gcs_url" value="$(arg gcs_url)" />
+		<arg name="tgt_system" value="$(arg tgt_system)" />
+		<arg name="tgt_component" value="$(arg tgt_component)" />
+		<arg name="log_output" value="$(arg log_output)" />
+		<arg name="fcu_protocol" value="$(arg fcu_protocol)" />
+		<arg name="respawn_mavros" default="$(arg respawn_mavros)" />
+	</include>
+  <!-- Aquí lanzamos la transformada estática entre el frame base_link y camera_link con 10 cm en x y 5 en z-->
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0.1 0 0.05 0 0 0 base_link camera_link 50" />
+  <include file="$(find gps_navigation)/launch/start_navsat_rover.launch" />
+  <include file="$(find gps_navigation)/launch/ekf_localization.launch" />
+  <include file="$(find gps_navigation)/launch/start_map_server.launch" />
+</launch>
