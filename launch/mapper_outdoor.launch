@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- launching the camera and the depthimage_to_laserscan node -->
+  <include file="$(find intelligent_avoidance)/launch/includes/camera_and_depth.launch"/>
+
+  <!-- launching mavros -->
+  <include file="$(find intelligent_avoidance)/launch/includes/mavros.launch"/>
+
+  <!-- launching roboclaw nodes -->
+  <include file="$(find intelligent_avoidance)/launch/includes/roboclaw.launch"/>
+
+  <!--EKF local launcher-->
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_local">
+    <rosparam command="load" file="$(find intelligent_avoidance)/config/ekf_local.yaml" />
+    <remap from="/odometry/filtered" to="/odometry/filtered/local" />
+  </node>
+
+  <!--EKF global launcher-->
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_global">
+    <rosparam command="load" file="$(find intelligent_avoidance)/config/ekf_global.yaml" />
+    <remap from="/odometry/filtered" to="/odometry/filtered/global" />
+  </node>
+
+  <!--Launching the navsat node launcher-->
+  <include file="$(find intelligent_avoidance)/launch/includes/start_navsat_rover.launch" />
+
+  <!--static transform between base link and camera link launcher-->
+  <node pkg="tf" type="static_transform_publisher" name="static_tf_broadcaster" args="0.1 0 0.1 0 0 0 base_link camera_link 50" />
+
+  <!-- launching the gmap node -->
+  <include file="$(find intelligent_avoidance)/launch/includes/gmapping_outdoor.launch.xml"/>
+</launch>

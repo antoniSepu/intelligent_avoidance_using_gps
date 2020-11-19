@@ -1,0 +1,21 @@
+<launch>
+
+    <arg name="camera" default="camera" />
+
+    <!-- start the camera sensor-->
+    <include file="$(find astra_camera)/launch/astra.launch">
+        <arg name="camera" default="$(arg camera)"/>
+    </include>
+
+    <!-- depthimage_to_laserscan node -->
+    <node pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" name="depthimage_to_laserscan">
+        <param name="scan_height" value="1"/>
+        <param name="output_frame_id" value="camera_link"/>
+        <param name="range_min" value="0.45"/>
+        <param name="range_max" value="8.0"/>
+        <remap from="image" to="$(arg camera)/depth/image"/>
+        <remap from="scan" to="$(arg camera)/scan"/>
+
+    </node>
+
+</launch>

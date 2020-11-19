@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <arg name="map_file" default="$(find intelligent_avoidance)/maps/backyard.yaml"/>
+
+  <!-- launching the camera and the depthimage_to_laserscan node -->
+  <include file="$(find intelligent_avoidance)/launch/includes/camera_and_depth.launch"/>
+
+  <!-- launching mavros -->
+  <include file="$(find intelligent_avoidance)/launch/includes/mavros.launch"/>
+
+  <!-- launching roboclaw nodes -->
+  <include file="$(find intelligent_avoidance)/launch/includes/roboclaw.launch"/>
+
+  <!--EKF local launcher-->
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_local">
+    <rosparam command="load" file="$(find intelligent_avoidance)/config/ekf_local.yaml" />
+    <remap from="/odometry/filtered" to="/odometry/filtered/local" />
+  </node>
+
+  <!--static transform between base link and camera link launcher-->
+  <node pkg="tf" type="static_transform_publisher" name="static_tf_broadcaster" args="0.1 0 0.1 0 0 0 base_link camera_link 50" />
+
+  <!--map_server launcher-->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" >
+    <param name="frame_id" value="map"/>
+  </node>
+
+  <!-- amcl launcher -->
+  <include file="$(find intelligent_avoidance)/launch/includes/amcl.launch.xml"/>
+  
+  <!--Launching the navigation stack-->
+  <include file="$(find intelligent_avoidance)/launch/includes/move_base.launch.xml"/>
+
+</launch>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<launch>
+  <!-- launching the camera and the depthimage_to_laserscan node -->
+  <include file="$(find intelligent_avoidance)/launch/includes/camera_and_depth.launch"/>
+
+  <!-- launching mavros -->
+  <include file="$(find intelligent_avoidance)/launch/includes/mavros.launch"/>
+
+</launch>
