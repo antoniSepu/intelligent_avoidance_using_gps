@@ -18,3 +18,4 @@ I have also made use of https://github.com/sonyccd/roboclaw_ros
 
 But I have made slight modifications to match with my odometry model. They are in the change required directory.
 
+Watch the project in action here: https://www.youtube.com/watch?v=9r9w-0yJ6Ew&list=PL3AIB3MbTGU4PUo9CTcVhQNN1gipRjqry
